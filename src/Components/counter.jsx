@@ -1,51 +1,48 @@
 import React, { Component } from 'react';
-
-
 class counter extends Component {
+  state = {
+    selectedFile: null
+  }
 
-handleSubmit(event) {
+  fileSelectedHandler = event => {
+     this.setState({
+       selectedFile: event.target.files[0]
+     })
+     console.log(event.target.files[0]);
+  }
 
-   var emailstr =  document.getElementById('uname').value;
-   var passstr = document.getElementById('pword').value;
+  fileUploadHandler = () => {
 
-   const url = "http://localhost:8090/api/login"
-   
-   var user = JSON.stringify({
-       "email":emailstr,
-       "password":passstr
-   })
-
-   console.log(user);
-   
-   let xhttp = new XMLHttpRequest();
-   xhttp.open("POST", url);
-   xhttp.setRequestHeader("Content-type", "application/json");
-   xhttp.setRequestHeader('Access-Control-Allow-Origin','*');
-   xhttp.setRequestHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
-   xhttp.responseType = 'text';
-   xhttp.send(user);
-
-   xhttp.onload = ()=>{
-    console.log(xhttp.responseText);
-     }
-}
+    const fd = new FormData();
+    fd.append("file", this.state.selectedFile);
+    console.log(fd);
 
 
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "http://192.168.1.117:8090/api/5bc89775c2e82517908b420c/upload" );
+    //xhttp.setRequestHeader("Content-Type", "multipart/form-data");
+    //xhttp.setRequestHeader("Key", "file");
+    xhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+    xhttp.setRequestHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
+    xhttp.responseType = 'text';  
+    xhttp.send(fd);
+ 
+    xhttp.onload = ()=>{
+      console.log(xhttp.responseText);
+      }
+    
+  }
+ 
   render() {
     return (
-        <form onSubmit={this.handleSubmit}>
-        <label>
-          UserName:
-          <input type="text" name="uname" id = "uname" />
-        </label>
-        <label>
-          Password:
-          <input type="text" name="pword" id="pword"/>
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
+      <div>
+      <input type = "file" onChange={this.fileSelectedHandler}/>
+      <button onClick={this.fileUploadHandler}>Upload</button>
+      </div>
     );
   }
 }
 
 export default counter;
+
+
